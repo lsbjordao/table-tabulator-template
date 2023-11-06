@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.2.3/dist/css/tabulator_simple.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.2.3/dist/js/tabulator.min.js"></script>
+</head>
+<body>
+    <div class="table-container">
+        <div class="table-left">
+            <div id="left-table"></div>
+        </div>
+        <div class="table-right">
+            <div id="right-table"></div>
+        </div>
+    </div>
+    <style>
+        .table-container {
+            display: flex;
+        }
+
+        .table-left, .table-right {
+            margin: 0 5px;
+        }
+
+        .tabulator-col .tabulator-col-content {
+            text-align: center;
+        }
+
+        .circle-indicator {
+            display: flex;
+            align-items: center; /* Centraliza verticalmente */
+        }
+
+        .circle {
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+        
+        .text-part {
+            flex: 1;
+            text-align: left; /* Alinhar o texto à esquerda */
+        }
+        
+        .circle-part {
+            display: flex;
+            align-items: center; /* Centraliza verticalmente */
+        }
+    </style>
+    <script>
+        fetch('./input/dataProgressBar.json')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(item => {
+                    item.Percentage = Math.round(item.Percentage);
+                });
+
+                const minValue = Math.min(...data.map(item => item.Brazil));
+                const maxValue = Math.max(...data.map(item => item.Brazil));
+
+                const leftTable = new Tabulator("#left-table", {
+                    data: data.slice(0, 17),
+                    layout: "fitDataTable",
+                    columns: [
+                        { title: "Genus", field: "Genus", headerSort: false },
+                        {
+                            title: "Brazil",
+                            field: "Brazil",
+                            headerSort: false,
+                            formatter: function (cell) {
+                                const value = cell.getValue();
+                                const normalizedValue = (value - minValue) / (maxValue - minValue);
+                                const circleSize = 4 + 11 * normalizedValue;
+
+                                // Crie a célula principal
+                                const cellContent = document.createElement("div");
+                                cellContent.className = "circle-indicator";
+
+                                // Crie a parte esquerda para o texto
+                                const textPart = document.createElement("div");
+                                textPart.className = "text-part";
+                                textPart.innerHTML = `${value}`;
+
+                                // Crie a parte direita para o círculo
+                                const circlePart = document.createElement("div");
+                                circlePart.className = "circle-part";
+
+                                const circle = document.createElement("div");
+                                circle.className = "circle";
+                                circle.style.height = circleSize + "px";
+                                circle.style.width = circleSize + "px";
+                                circle.style.backgroundColor = "black";
+
+                                circlePart.appendChild(circle);
+
+                                // Adicione as partes à célula principal
+                                cellContent.appendChild(textPart);
+                                cellContent.appendChild(circlePart);
+
+                                return cellContent;
+                            },
+                        },
+                        { title: "Worldwide", field: "Worldwide", headerSort: false },
+                        {
+                            title: "%",
+                            field: "Percentage",
+                            formatter: function (cell) {
+                                const value = cell.getValue();
+                                const progressBar = document.createElement("div");
+                                progressBar.style.width = "100%";
+                                progressBar.style.height = "100%";
+                                progressBar.style.backgroundColor = "lightgray";
+                                progressBar.style.color = "black";
+                                progressBar.style.outline = "1px solid black";
+                                progressBar.style.textAlign = "center";
+                                progressBar.style.lineHeight = "100%";
+                                progressBar.style.position = "relative";
+                                const innerBar = document.createElement("div");
+                                innerBar.style.width = value + "%";
+                                innerBar.style.height = "100%";
+                                innerBar.style.backgroundColor = "black";
+                                innerBar.style.color = "white";
+                                innerBar.style.textAlign = "left";
+                                innerBar.style.lineHeight = "100%";
+                                innerBar.textContent = value;
+                                progressBar.appendChild(innerBar);
+                                return progressBar;
+                            },
+                            width: 80,
+                            headerSort: false,
+                        },
+                    ],
+                });
+
+                const rightTable = new Tabulator("#right-table", {
+                    data: data.slice(17),
+                    layout: "fitDataTable",
+                    headerSort: false,
+                    columns: [
+                        { title: "Genus", field: "Genus", headerSort: false },
+                        {
+                            title: "Brazil",
+                            field: "Brazil",
+                            headerSort: false,
+                            formatter: function (cell) {
+                                const value = cell.getValue();
+                                const normalizedValue = (value - minValue) / (maxValue - minValue);
+                                const circleSize = 4 + 11 * normalizedValue;
+
+                                // Crie a célula principal
+                                const cellContent = document.createElement("div");
+                                cellContent.className = "circle-indicator";
+
+                                // Crie a parte esquerda para o texto
+                                const textPart = document.createElement("div");
+                                textPart.className = "text-part";
+                                textPart.innerHTML = `${value}`;
+
+                                // Crie a parte direita para o círculo
+                                const circlePart = document.createElement("div");
+                                circlePart.className = "circle-part";
+
+                                const circle = document.createElement("div");
+                                circle.className = "circle";
+                                circle.style.height = circleSize + "px";
+                                circle.style.width = circleSize + "px";
+                                circle.style.backgroundColor = "black";
+
+                                circlePart.appendChild(circle);
+
+                                // Adicione as partes à célula principal
+                                cellContent.appendChild(textPart);
+                                cellContent.appendChild(circlePart);
+
+                                return cellContent;
+                            },
+                        },
+                        { title: "Worldwide", field: "Worldwide", headerSort: false },
+                        {
+                            title: "%",
+                            field: "Percentage",
+                            formatter: function (cell) {
+                                const value = cell.getValue();
+                                const progressBar = document.createElement("div");
+                                progressBar.style.width = "100%";
+                                progressBar.style.height = "100%";
+                                progressBar.style.backgroundColor = "lightgray";
+                                progressBar.style.color = "black";
+                                progressBar.style.outline = "1px solid black";
+                                progressBar.style.textAlign = "center";
+                                progressBar.style.lineHeight = "100%";
+                                progressBar.style.position = "relative";
+                                const innerBar = document.createElement("div");
+                                innerBar.style.width = value + "%";
+                                innerBar.style.height = "100%";
+                                innerBar.style.backgroundColor = "black";
+                                innerBar.style.color = "white";
+                                innerBar.style.textAlign = "left";
+                                innerBar.style.lineHeight = "100%";
+                                innerBar.textContent = value;
+                                progressBar.appendChild(innerBar);
+                                return progressBar;
+                            },
+                            width: 80,
+                            headerSort: false,
+                        },
+                    ],
+                });
+            })
+            .catch(error => console.error('Erro ao carregar os dados: ' + error));
+    </script>
+</body>
+</html>
