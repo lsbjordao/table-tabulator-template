@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/tabulator-tables@5.2.3/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/tabulator-tables@5.2.3/dist/js/tabulator.min.js"></script>
+
+    <style>
+        .custom-progress-bar {
+            background: linear-gradient(90deg, black 50%, lightgray 50%);
+            outline: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+
+<div id="example-table"></div>
+
+<script>
+    fetch('./input/dataProgressBar.json')
+        .then(response => response.json())
+        .then(data => {
+            const table = new Tabulator("#example-table", {
+                data: data,
+                layout: "fitDataTable",
+                columns: [
+                    { title: "Genus", field: "Genus", headerSort: false },
+                    { title: "Brazil", field: "Brazil", headerSort: false },
+                    { title: "Worldwide", field: "Worldwide", headerSort: false },
+                    {
+                        title: "%",
+                        field: "Percentage",
+                        formatter: function(cell) {
+                            const value = cell.getValue();
+                            const progressBar = document.createElement("div");
+                            progressBar.className = "custom-progress-bar";
+                            progressBar.style.width = value + "%";
+                            progressBar.style.height = "100%";
+                            progressBar.style.color = "white";
+                            progressBar.style.textAlign = "left";
+                            progressBar.style.lineHeight = "100%";
+                            progressBar.textContent = value;
+                            return progressBar;
+                        },
+                        width: 80
+                    },
+                ],
+            });
+        })
+        .catch(error => console.error('Erro ao carregar os dados: ' + error));
+</script>
+
+</body>
+</html>
